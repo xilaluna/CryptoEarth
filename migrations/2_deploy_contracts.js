@@ -1,5 +1,5 @@
-const EarthImageContract = artifacts.require("EarthImageContract")
+const EarthimageContract = artifacts.require("EarthimageContract")
 
 module.exports = function (deployer) {
-  deployer.deploy(EarthImageContract)
+  deployer.deploy(EarthimageContract)
 }

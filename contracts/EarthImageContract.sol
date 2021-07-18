@@ -5,11 +5,11 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract EarthImageContract is ERC721URIStorage {
+contract EarthimageContract is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("EarthImage", "ERTHIMG") {}
+    constructor() ERC721("Earthimage", "ERTHIMG") {}
 
     function awardItem(address recipient, string memory metadata)
         public
