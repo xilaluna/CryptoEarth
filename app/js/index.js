@@ -1,5 +1,6 @@
+require("dotenv").config()
 import Web3 from "web3"
-import shoutoutArtifact from "../../build/contracts/ShoutoutContract.json"
+import earthimageArtifact from "../../build/contracts/EarthimageContract.json"
 import fleek from "@fleekhq/fleek-storage-js"
 
 // Create a Javascript class to keep track of all the things
@@ -8,7 +9,7 @@ import fleek from "@fleekhq/fleek-storage-js"
 const App = {
   web3: null,
   account: null,
-  shoutoutContract: null,
+  earthimageContract: null,
 
   start: async function () {
     // Connect to Web3 instance.
@@ -17,8 +18,11 @@ const App = {
     try {
       // Get contract instance.
       const networkId = await web3.eth.net.getId()
-      const deployedNetwork = shoutoutArtifact.networks[networkId]
-      this.shoutoutContract = new web3.eth.Contract(shoutoutArtifact.abi, deployedNetwork.address)
+      const deployedNetwork = earthimageArtifact.networks[networkId]
+      this.earthimageContract = new web3.eth.Contract(
+        earthimageArtifact.abi,
+        deployedNetwork.address
+      )
 
       // Get accounts and refresh the balance.
       const accounts = await web3.eth.getAccounts()
@@ -31,7 +35,7 @@ const App = {
 
   refreshBalance: async function () {
     // Fetch the balanceOf method from our contract.
-    const { balanceOf } = this.shoutoutContract.methods
+    const { balanceOf } = this.earthimageContract.methods
 
     // Fetch shoutout amount by calling balanceOf in our contract.
     const balance = await balanceOf(this.account).call()
@@ -74,7 +78,7 @@ const App = {
 
   awardItem: async function (to, metadataURL) {
     // Fetch the awardItem method from our contract.
-    const { awardItem } = this.shoutoutContract.methods
+    const { awardItem } = this.earthimageContract.methods
 
     // Award the shoutout.
     await awardItem(to, metadataURL).send({ from: this.account })
@@ -113,15 +117,27 @@ $(document).ready(function () {
   window.App.start()
 
   // Capture the form submission event when it occurs.
-  $("#shoutout-form").submit(function (e) {
+  $("#earth-image-form").submit(function (e) {
     // Run the code below instead of performing the default form submission action.
     e.preventDefault()
 
     // Capture form data and create metadata from the submission.
-    const name = $("#from").val()
-    const to = $("#to").val()
-    const message = $("#message").val()
+    const owner = $("#owner").val()
+    const location = $("#location").val()
+    const heading = $("#heading").val()
+    const fov = $("#fov").val()
+    const pitch = $("#pitch").val()
 
-    window.App.storeMetadata(name, to, message)
+    const requestUrl = `https://maps.googleapis.com/maps/api/streetview?size=700x400&location=${location}&heading=${heading}&fov=${fov}&pitch=${pitch}&key=${process.env.IMAGE_API_KEY}`
+
+    fetch(requestUrl)
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (data) {
+        let image = data
+        console.log(image)
+        window.App.storeMetadata(owner, location, heading, fov, pitch, image)
+      })
   })
 })
