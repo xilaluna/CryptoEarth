@@ -11,14 +11,14 @@ contract EarthimageContract is ERC721URIStorage {
 
     constructor() ERC721("Earthimage", "ERTHIMG") {}
 
-    function awardItem(address recipient, string memory metadata)
+    function createEarthImage(address owner, string memory metadata)
         public
         returns (uint256)
     {
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _mint(recipient, newItemId);
+        _mint(owner, newItemId);
         _setTokenURI(newItemId, metadata);
 
         return newItemId;
