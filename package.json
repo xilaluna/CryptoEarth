@@ -7,9 +7,11 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./",
+    "build": "webpack",
+    "dev": "webpack-dev-server"
   },
-  "author": "",
+  "author": "Xila",
   "license": "ISC",
   "dependencies": {
     "@fleekhq/fleek-storage-js": "^1.0.17",
