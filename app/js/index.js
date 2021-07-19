@@ -31,7 +31,7 @@ const App = {
     }
   },
 
-  storeMetadata: async function (owner, location, heading, fov, pitch, image) {
+  storeMetadata: async function (owner, location, heading, fov, pitch) {
     // Build the metadata.
     var metadata = {
       name: "EarthImage",
@@ -41,14 +41,14 @@ const App = {
       heading: heading,
       fov: fov,
       pitch: pitch,
-      image: image,
+      // image: image,
       timestamp: new Date().toISOString(),
     }
 
     // Configure the uploader.
     const uploadMetadata = {
-      apiKey: process.env.FLEEK_API_KEY,
-      apiSecret: process.env.FLEEK_API_SECRET,
+      apiKey: "XANlT23/BpjPNqy1FcyAXA==",
+      apiSecret: "kZXBlh5Mb3yWDULPnNkooBIjUrvbuXgDAWHPs0/dyFk=",
       key: `metadata/${metadata.timestamp}.json`,
       data: JSON.stringify(metadata),
     }
@@ -142,16 +142,17 @@ $(document).ready(async function () {
     const fov = $("#fov").val()
     const pitch = $("#pitch").val()
 
-    const requestUrl = `https://maps.googleapis.com/maps/api/streetview?size=700x400&location=${location}&heading=${heading}&fov=${fov}&pitch=${pitch}&key=${process.env.IMAGE_API_KEY}`
-    console.log("hello")
-    fetch(requestUrl)
-      .then(function (response) {
-        return response.json()
-      })
-      .then(function (data) {
-        let image = data
-        console.log(image)
-        window.App.storeMetadata(owner, location, heading, fov, pitch, image)
-      })
+    // const requestUrl = `https://maps.googleapis.com/maps/api/streetview?size=700x400&location=${location}&heading=${heading}&fov=${fov}&pitch=${pitch}&key=${process.env.IMAGE_API_KEY}`
+    // console.log("hello")
+    // fetch(requestUrl)
+    //   .then(function (response) {
+    //     return response.json()
+    //   })
+    //   .then(function (data) {
+    //     let image = data
+    //     console.log(image)
+    //     window.App.storeMetadata(owner, location, heading, fov, pitch, image)
+    //   })
+    window.App.storeMetadata(owner, location, heading, fov, pitch)
   })
 })
