@@ -27,40 +27,29 @@ const App = {
       // Get accounts and refresh the balance.
       const accounts = await web3.eth.getAccounts()
       this.account = accounts[0]
-      this.refreshBalance()
     } catch (error) {
       console.error("Could not connect to contract or chain: ", error)
     }
   },
 
-  refreshBalance: async function () {
-    // Fetch the balanceOf method from our contract.
-    const { balanceOf } = this.earthimageContract.methods
-
-    // Fetch shoutout amount by calling balanceOf in our contract.
-    const balance = await balanceOf(this.account).call()
-
-    // Update the page using jQuery.
-    $("#balance").html(balance)
-    $("#total-shouts").show()
-    $("my-account").html(this.account)
-  },
-
-  storeMetadata: async function (name, to, message) {
+  storeMetadata: async function (owner, location, heading, fov, pitch, image) {
     // Build the metadata.
     var metadata = {
-      name: "shoutouts.eth",
-      description: `Shoutout from ${name}`,
-      to: to,
-      message: message,
-      image: "https://ipfs.io/ipfs/QmRGhvqTPvx8kgMSLFdPaCysKvhtP5GV5MsKDmTx3v2QxT",
+      name: "EarthImage",
+      description: `EarthImage owned by ${owner}`,
+      owner: owner,
+      location: location,
+      heading: heading,
+      fov: fov,
+      pitch: pitch,
+      image: image,
       timestamp: new Date().toISOString(),
     }
 
     // Configure the uploader.
     const uploadMetadata = {
-      apiKey: "KlBFeA+IOCSibbOtRjqN9Q==",
-      apiSecret: "k3X0fEIDpMiOw6y2x6OayqJXOvxnr4eT29Gwfb6IG0M=",
+      apiKey: process.env.FLEEK_API_KEY,
+      apiSecret: process.env.FLEEK_API_SECRET,
       key: `metadata/${metadata.timestamp}.json`,
       data: JSON.stringify(metadata),
     }
@@ -73,23 +62,20 @@ const App = {
     const result = await fleek.upload(uploadMetadata)
 
     // Once the file is added, then we can send a shoutout!
-    this.awardItem(to, result.publicUrl)
+    this.createEarthImage(owner, result.publicUrl)
   },
 
-  awardItem: async function (to, metadataURL) {
-    // Fetch the awardItem method from our contract.
-    const { awardItem } = this.earthimageContract.methods
+  createEarthImage: async function (owner, metadataURL) {
+    // Fetch the createEarthImage method from our contract.
+    const { createEarthImage } = this.earthimageContract.methods
 
-    // Award the shoutout.
-    await awardItem(to, metadataURL).send({ from: this.account })
+    // createEarthImage the shoutout.
+    await createEarthImage(owner, metadataURL).send({ from: this.account })
 
     // Set the status and show the metadata link on IPFS.
     this.setStatus(
-      `Shoutout sent! View the metadata <a href="${metadataURL}" target="_blank">here</a>.`
+      `Shoutout sent! View the metadata <a href="${metadataURL}" target="_blank" style="color: #00ff00">here</a>.`
     )
-
-    // Finally, refresh the balance (in the case where we send a shoutout to ourselves!)
-    this.refreshBalance()
   },
 
   setStatus: function (message) {
@@ -115,6 +101,36 @@ $(document).ready(function () {
   }
   // Initialize Web3 connection.
   window.App.start()
+
+  const fleekInput = {
+    apiKey: process.env.FLEEK_API_KEY,
+    apiSecret: process.env.FLEEK_API_SECRET,
+    bucket: "xiluna-team-bucket",
+    getOptions: ["publicUrl"],
+  }
+
+  const result = await fleek.listFiles(fleekInput)
+
+  $.each(result, function (index, value) {
+    $.ajax({
+      type: "GET",
+      url: value["publicUrl"],
+      dataType: "json",
+      success: function (data) {
+        let owner = ""
+
+        if (data.owner == address) {
+          owner = "You are the owner of this recipe!"
+        } else {
+          owner = data.owner
+        }
+
+        $("#activity").append(
+          `<li class="list-group-item">Location: ${data.location} | Owner: ${owner}</li>`
+        )
+      },
+    })
+  })
 
   // Capture the form submission event when it occurs.
   $("#earth-image-form").submit(function (e) {
