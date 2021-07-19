@@ -1,4 +1,3 @@
-require("dotenv").config()
 import Web3 from "web3"
 import earthimageArtifact from "../../build/contracts/EarthimageContract.json"
 import fleek from "@fleekhq/fleek-storage-js"
@@ -86,7 +85,7 @@ const App = {
 window.App = App
 
 // When all the HTML is loaded, run the code in the callback below.
-$(document).ready(function () {
+$(document).ready(async function () {
   // Detect Web3 provider.
   if (window.ethereum) {
     // use MetaMask's provider
@@ -110,7 +109,6 @@ $(document).ready(function () {
   }
 
   const result = await fleek.listFiles(fleekInput)
-
   $.each(result, function (index, value) {
     $.ajax({
       type: "GET",
@@ -145,7 +143,7 @@ $(document).ready(function () {
     const pitch = $("#pitch").val()
 
     const requestUrl = `https://maps.googleapis.com/maps/api/streetview?size=700x400&location=${location}&heading=${heading}&fov=${fov}&pitch=${pitch}&key=${process.env.IMAGE_API_KEY}`
-
+    console.log("hello")
     fetch(requestUrl)
       .then(function (response) {
         return response.json()
