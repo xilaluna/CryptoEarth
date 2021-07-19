@@ -85,7 +85,7 @@ const App = {
 window.App = App
 
 // When all the HTML is loaded, run the code in the callback below.
-$(document).ready(async function () {
+$(document).ready(function () {
   // Detect Web3 provider.
   if (window.ethereum) {
     // use MetaMask's provider
@@ -101,34 +101,34 @@ $(document).ready(async function () {
   // Initialize Web3 connection.
   window.App.start()
 
-  const fleekInput = {
-    apiKey: process.env.FLEEK_API_KEY,
-    apiSecret: process.env.FLEEK_API_SECRET,
-    bucket: "xiluna-team-bucket",
-    getOptions: ["publicUrl"],
-  }
+  // const fleekInput = {
+  //   apiKey: process.env.FLEEK_API_KEY,
+  //   apiSecret: process.env.FLEEK_API_SECRET,
+  //   bucket: "xiluna-team-bucket",
+  //   getOptions: ["publicUrl"],
+  // }
 
-  const result = await fleek.listFiles(fleekInput)
-  $.each(result, function (index, value) {
-    $.ajax({
-      type: "GET",
-      url: value["publicUrl"],
-      dataType: "json",
-      success: function (data) {
-        let owner = ""
+  // const result = await fleek.listFiles(fleekInput)
+  // $.each(result, function (index, value) {
+  //   $.ajax({
+  //     type: "GET",
+  //     url: value["publicUrl"],
+  //     dataType: "json",
+  //     success: function (data) {
+  //       let owner = ""
 
-        if (data.owner == address) {
-          owner = "You are the owner of this recipe!"
-        } else {
-          owner = data.owner
-        }
+  //       if (data.owner == address) {
+  //         owner = "You are the owner of this recipe!"
+  //       } else {
+  //         owner = data.owner
+  //       }
 
-        $("#activity").append(
-          `<li class="list-group-item">Location: ${data.location} | Owner: ${owner}</li>`
-        )
-      },
-    })
-  })
+  //       $("#activity").append(
+  //         `<li class="list-group-item">Location: ${data.location} | Owner: ${owner}</li>`
+  //       )
+  //     },
+  //   })
+  // })
 
   // Capture the form submission event when it occurs.
   $("#earth-image-form").submit(function (e) {
